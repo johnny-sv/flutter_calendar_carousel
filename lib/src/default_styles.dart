@@ -36,6 +36,10 @@ const TextStyle defaultInactiveDaysTextStyle = const TextStyle(
 	color: Colors.black38,
 	fontSize: 14.0,
 );
+const TextStyle defaultBlockoutDayTextStyle = const TextStyle(
+	color: Colors.white,
+	fontSize: 14.0,
+);
 final TextStyle defaultInactiveWeekendTextStyle = TextStyle(
 	color: Colors.pinkAccent.withOpacity(0.6),
 	fontSize: 14.0,

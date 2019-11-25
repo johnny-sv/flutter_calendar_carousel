@@ -133,10 +133,13 @@ class CalendarCarousel<T extends EventInterface> extends StatefulWidget {
   final ScrollPhysics pageScrollPhysics;
 
   // custom
+  final TextStyle blockoutDayTextStyle;
   final Color blockoutDayButtonColor;
   final bool isEnabled;
   final List<DateTime> blockouts;
   final Function(DateTime, DateTime, List<T>) onSelected;
+  final Function onPrev;
+  final Function onNext;
 
   CalendarCarousel({
     this.viewportFraction = 1.0,
@@ -212,10 +215,13 @@ class CalendarCarousel<T extends EventInterface> extends StatefulWidget {
     this.dayMainAxisAlignment = MainAxisAlignment.center,
     this.showIconBehindDayText = false,
     this.pageScrollPhysics = const ScrollPhysics(),
+    this.blockoutDayTextStyle,
     this.blockoutDayButtonColor = Colors.grey,
     this.isEnabled = true,
     this.blockouts,
     this.onSelected,
+    this.onPrev,
+    this.onNext,
   });
 
   @override
@@ -378,10 +384,20 @@ class _CalendarState<T extends EventInterface> extends State<CalendarCarousel<T>
             headerIconColor: widget.iconColor,
             leftButtonIcon: widget.leftButtonIcon,
             rightButtonIcon: widget.rightButtonIcon,
-            onLeftButtonPressed: () => this._pageNum > 0 ? _setDate(this._pageNum - 1) : null,
-            onRightButtonPressed: () => widget.weekFormat
+            onLeftButtonPressed: () {
+              if (widget.onPrev != null) {
+                widget.onPrev();
+              }
+              return this._pageNum > 0 ? _setDate(this._pageNum - 1) : null;
+            },
+            onRightButtonPressed: () {
+              if (widget.onNext != null) {
+                widget.onNext();
+              }
+              return widget.weekFormat
                 ? (this._weeks.length - 1 > this._pageNum ? _setDate(this._pageNum + 1) : null)
-                : (this._dates.length - 1 > this._pageNum ? _setDate(this._pageNum + 1) : null),
+                : (this._dates.length - 1 > this._pageNum ? _setDate(this._pageNum + 1) : null);
+            },
             isTitleTouchable: widget.headerTitleTouchable,
             onHeaderTitlePressed: widget.onHeaderTitlePressed != null
                 ? widget.onHeaderTitlePressed
@@ -615,7 +631,11 @@ class _CalendarState<T extends EventInterface> extends State<CalendarCarousel<T>
                   DateTime now = DateTime(year, month, 1);
                   TextStyle textStyle;
                   TextStyle defaultTextStyle;
-                  if (isPrevMonthDay && !widget.showOnlyCurrentMonthDate) {
+                  if (isBlockoutDay) {
+                    now = DateTime(year, month, index + 1 - _startWeekday);
+                    textStyle = widget.blockoutDayTextStyle;
+                    defaultTextStyle = defaultBlockoutDayTextStyle;
+                  } else if (isPrevMonthDay && !widget.showOnlyCurrentMonthDate) {
                     now = now.subtract(Duration(days: _startWeekday - index));
                     textStyle = widget.prevDaysTextStyle;
                     defaultTextStyle = defaultPrevDaysTextStyle;
@@ -729,7 +749,10 @@ class _CalendarState<T extends EventInterface> extends State<CalendarCarousel<T>
                         weekDays[index].month, weekDays[index].day);
                     TextStyle textStyle;
                     TextStyle defaultTextStyle;
-                    if (isPrevMonthDay && !widget.showOnlyCurrentMonthDate) {
+                    if (isBlockoutDay) {
+                      textStyle = widget.blockoutDayTextStyle;
+                      defaultTextStyle = defaultBlockoutDayTextStyle;
+                    } else if (isPrevMonthDay && !widget.showOnlyCurrentMonthDate) {
                       textStyle = widget.prevDaysTextStyle;
                       defaultTextStyle = defaultPrevDaysTextStyle;
                     } else if (isThisMonthDay) {
