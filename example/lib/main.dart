@@ -153,28 +153,18 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     /// Example with custom icon
     _calendarCarousel = CalendarCarousel<Event>(
-      onDayPressed: (DateTime startDate, DateTime endDate, List<Event> events) {
-        this.setState(() {
-          _startDate = startDate;
-          _endDate = endDate;
-        });
+      onDayPressed: (DateTime date, List<Event> events) {
+        this.setState(() => _currentDate = date);
         events.forEach((event) => print(event.title));
-      },
-      onHeaderRightButtonPressed: () {
-        print('onHeaderRightButtonPressed');
-      },
-      onHeaderLeftButtonPressed: () {
-        print('onHeaderLeftButtonPressed');
       },
       weekendTextStyle: TextStyle(
         color: Colors.red,
       ),
-      minSelectedDate: DateTime.now(),
       thisMonthDayBorderColor: Colors.grey,
 //          weekDays: null, /// for pass null when you do not want to render weekDays
       headerText: 'Custom Header',
 //          markedDates: _markedDate,
-      // weekFormat: true,
+      weekFormat: true,
       markedDatesMap: _markedDateMap,
       height: 200.0,
       selectedDateTime: _currentDate2,
