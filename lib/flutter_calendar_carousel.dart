@@ -530,6 +530,7 @@ class _CalendarState<T extends EventInterface> extends State<CalendarCarousel<T>
                                       ? widget.nextMonthDayBorderColor
                                       : widget.thisMonthDayBorderColor,
                     ),
+                    borderRadius: BorderRadius.circular(3.0),
                   ),
           child: Stack(
             children: widget.showIconBehindDayText
@@ -836,6 +837,7 @@ class _CalendarState<T extends EventInterface> extends State<CalendarCarousel<T>
   }
 
   void _onDayPressed(DateTime picked) {
+    if (!widget.isEnabled) return;
     if (picked == null) return;
     if (minDate != null &&
         picked.millisecondsSinceEpoch <
